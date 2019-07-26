@@ -23,15 +23,16 @@ app.use(
     //extensions Try to match extensions from passed to search for file when no extension is sufficed in URL. First found is served. (defaults to false)
   })
 );
-// app.use(cors());//
+app.use(cors());
+
 app.use(
-  proxy("/api", {
-    target: "https://qa-i18n-h5-game.8win.com",
+  proxy("/api/v1/weather", {
+    target: "https://api.seniverse.com/",
     changeOrigin: true,
     // agent: new httpsProxyAgent('http://1.2.3.4:88'),
     //rewrite: path => path.replace(/\/api/, ''),
     pathRewrite: {
-      // '^/api': '',
+      "^/api/v1/weather": "/v3/weather"
     },
     logs: true
   })
@@ -39,4 +40,3 @@ app.use(
 
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(port);
-
