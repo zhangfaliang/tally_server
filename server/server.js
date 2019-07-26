@@ -1,14 +1,11 @@
 const Koa = require("koa");
 const fs = require("fs");
 var path = require("path");
-//const https = require("https");
 const http = require("http");
-// const enforceHttps = require('koa-sslify');
-
-// var options = {
-//   key: fs.readFileSync(path.resolve("server/ssl/server.key")),
-//   cert: fs.readFileSync(path.resolve("server/ssl/server.crt"))
-// };
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8008;
+}
 const app = new Koa();
 var cors = require("koa2-cors");
 const Router = require("koa-router");
@@ -41,8 +38,5 @@ app.use(
 );
 
 app.use(router.routes()).use(router.allowedMethods());
-app.listen(9088);
+app.listen(port);
 
-// console.log(process.env.PORT ,'process.env.PORT ')
-// http.createServer(options, app.callback()).listen(process.env.PORT || 4000);
-// console.log("listening on port 9000");
