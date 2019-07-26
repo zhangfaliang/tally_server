@@ -24,18 +24,18 @@ app.use(
   })
 );
 
-// app.use(
-//   proxy("/api/v1/weather", {
-//     target: "https://api.seniverse.com/",
-//     changeOrigin: true,
-//     // agent: new httpsProxyAgent('http://1.2.3.4:88'),
-//     //rewrite: path => path.replace(/\/api/, ''),
-//     pathRewrite: {
-//       "^/api/v1/weather": "/v3/weather"
-//     },
-//     logs: true
-//   })
-// );
+app.use(
+  proxy("/api/v1/weather", {
+    target: "https://api.seniverse.com/",
+    changeOrigin: true,
+    // agent: new httpsProxyAgent('http://1.2.3.4:88'),
+    //rewrite: path => path.replace(/\/api/, ''),
+    pathRewrite: {
+      "^/api/v1/weather": "/v3/weather"
+    },
+    logs: true
+  })
+);
 
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(port);
