@@ -13,7 +13,7 @@ initRouter({ app, router });
 //setCookies({ app, router });
 app.use(
   proxy("/api", {
-    target: "http://localhost:8008",
+    target: "https://glacial-headland-51596.herokuapp.com",
     changeOrigin: true,
     // agent: new httpsProxyAgent('http://1.2.3.4:88'),
     rewrite: path => path.replace(/\/api/, ""),
