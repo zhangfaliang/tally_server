@@ -1,7 +1,14 @@
 const qs = require("qs");
 const { adminUsers } = require("./_utils");
-const getUser = ({ router }) => {
-  router.get("/v1/user", (ctx, next) => {
+const getUser = ({ router,pool }) => {
+  router.get("/v1/user", async (ctx, next) => {
+
+    // const client = await pool.connect()
+    // const result = await client.query('SELECT * FROM test_table');
+    // console.log(result,'---------000000000')
+  
+    // client.release();
+
     const cookie = ctx.headers.cookie || "";
     const cookies = qs.parse(cookie.replace(/\s/g, ""), { delimiter: ";" });
     const response = {};
@@ -22,8 +29,6 @@ const getUser = ({ router }) => {
       }
     }
     response.user = user;
-    console.log(ctx.headers, "----++++------");
-
     ctx.body = JSON.stringify(response);
   });
 };

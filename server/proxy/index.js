@@ -5,13 +5,13 @@ const proxyFn = ({ app, port }) => {
     proxy("/test/v1/weather", {
       target: "https://api.seniverse.com/",
       changeOrigin: true,
-      pathRewrite: { "^/api/v1/weather": "/v3/weather" }
+      pathRewrite: { "^/test/v1/weather": "/v3/weather" }
     })
   );
   app.use(
     proxy("/api", {
-      // target: "https://glacial-headland-51596.herokuapp.com",
-      target: `http://localhost:${port}`,
+      target: "https://glacial-headland-51596.herokuapp.com",
+      //target: `http://localhost:${port}`,
       changeOrigin: true,
       // agent: new httpsProxyAgent('http://1.2.3.4:88'),
       rewrite: path => path.replace(/\/api/, ""),

@@ -12,17 +12,20 @@ const login = ({ router, app }) => {
     if (user.length > 0 && user[0].password === password) {
       const now = new Date();
       now.setDate(now.getDate() + 1);
-      //       res.cookie(
-      //         'token',
-      //         JSON.stringify({ id: user[0].id, deadline: now.getTime() }),
-      //         {
-      //           maxAge: 900000,
-      //           httpOnly: true,
-      //         }
-      //       )
+      ctx.cookies.set(
+        "token",
+        JSON.stringify({ id: user[0].id, deadline: now.getTime() }),
+        {
+          maxAge: 900000,
+          httpOnly: true
+        }
+      );
       ctx.body = JSON.stringify({ success: true, message: "Ok" });
     } else {
-      ctx.body = JSON.stringify({ success: false, message: "用户或者密码不对" });
+      ctx.body = JSON.stringify({
+        success: false,
+        message: "用户或者密码不对"
+      });
     }
   });
 };
