@@ -1,20 +1,19 @@
-const { adminUsers } = require("./_utils");
-
-const login = ({ router, app }) => {
-  router.post("/v1/user/login", (ctx, next) => {
-    app.use(async (ctx, next) => {
-      ctx.loginFlag = true;
-    });
-
+const { get, isEmpty } = require("lodash");
+const login = ({ router, app, pool }) => {
+  router.post("/v1/user/login", async (ctx, next) => {
     const { username, password } = ctx.request.body;
-    const user = adminUsers.filter(item => item.username === username);
-
-    if (user.length > 0 && user[0].password === password) {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT * FROM user_table where username='${username}' and password ='${password}'`
+    );
+    client.release();
+    const userInfo = get(result, "rows.0", {});
+    if (!isEmpty(userInfo)) {
       const now = new Date();
       now.setDate(now.getDate() + 1);
       ctx.cookies.set(
         "token",
-        JSON.stringify({ id: user[0].id, deadline: now.getTime() }),
+        JSON.stringify({ id: userInfo.userid, deadline: now.getTime() }),
         {
           maxAge: 900000,
           httpOnly: true

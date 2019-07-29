@@ -1,35 +1,37 @@
 const qs = require("qs");
-const { adminUsers } = require("./_utils");
-const getUser = ({ router,pool }) => {
+const { getToken } = require("./_utils");
+const { get, isEmpty } = require("lodash");
+
+const getUser = ({ router, pool }) => {
   router.get("/v1/user", async (ctx, next) => {
-
-    // const client = await pool.connect()
-    // const result = await client.query('SELECT * FROM test_table');
-    // console.log(result,'---------000000000')
-  
-    // client.release();
-
-    const cookie = ctx.headers.cookie || "";
-    const cookies = qs.parse(cookie.replace(/\s/g, ""), { delimiter: ";" });
-    const response = {};
-    let user = {};
-    if (!cookies.token) {
-      ctx.body = JSON.stringify({ message: "Not Login" });
-      return;
-    }
-    const token = JSON.parse(cookies.token);
-    if (token) {
-      response.success = token.deadline > new Date().getTime();
-    }
-    if (response.success) {
-      const userItem = adminUsers.find(_ => _.id === token.id);
-      if (userItem) {
-        const { password, ...other } = userItem;
-        user = other;
+    try {
+      const { token } = getToken(ctx.headers);
+      if (!token) {
+        ctx.body = JSON.stringify({ message: "Not Login" });
+        return;
       }
+      const response = {};
+      let user = {};
+      response.success = token.deadline > new Date().getTime();
+      const client = await pool.connect();
+      const result = await client.query(
+        `SELECT * FROM user_table where userid='${token.id}'`
+      );
+      client.release();
+      const userInfo = get(result, "rows.0", {});
+      if (!isEmpty(userInfo)) {
+        const { password, ...other } = userInfo;
+        response.user = other;
+        ctx.body = JSON.stringify(response);
+      } else {
+        ctx.body = JSON.stringify({
+          success: false,
+          message: "请重新登录"
+        });
+      }
+    } catch (error) {
+      ctx.body = JSON.stringify({ success: false, message: "请重新登录" });
     }
-    response.user = user;
-    ctx.body = JSON.stringify(response);
   });
 };
 
